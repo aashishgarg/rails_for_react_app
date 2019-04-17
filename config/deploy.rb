@@ -5,8 +5,8 @@ require 'mina/rvm'
 require 'yaml'
 require 'io/console'
 
-%w(base check crontab log_rotate mysql nginx product_deployment_sheet).each do |pkg|
-  require "#{File.join(__dir__, 'recipes', pkg)}"
+%w[base check crontab log_rotate mysql nginx product_deployment_sheet].each do |pkg|
+  require "#{File.join(__dir__,'deploy','recipes', pkg)}"
 end
 
 set :application, 'labs'
@@ -14,7 +14,7 @@ set :user, 'deploy'
 set :deploy_to, "/home/#{fetch(:user)}/#{fetch(:application)}"
 set :repository, repository_url
 set :branch, set_branch
-set :rvm_path, "~/.rvm/scripts/rvm"
+set :rvm_path, '~/.rvm/scripts/rvm'
 set :ruby_version, "#{File.readlines(File.join(__dir__, '..', '.ruby-version')).first.strip}"
 set :gemset, "#{File.readlines(File.join(__dir__, '..', '.ruby-gemset')).first.strip}"
 set :shared_dirs, fetch(:shared_dirs, []).push('public/system', 'tmp')
@@ -27,14 +27,15 @@ set :ubuntu_code_name, 'bionic' # To find out - (`lsb_release --codename | cut -
 task :remote_environment do
   set :rails_env, ENV['on'].to_sym unless ENV['on'].nil?
   require "#{File.join(__dir__, 'deploy', "#{fetch(:rails_env)}_configurations_files", "#{fetch(:rails_env)}.rb")}"
-  # invoke :'rvm:use', "ruby-#{fetch(:ruby_version)}@#{fetch(:gemset)}"
+  invoke :'rvm:use', "ruby-#{fetch(:ruby_version)}@#{fetch(:gemset)}"
 end
 
 task setup_prerequisites: :remote_environment do
   set :rails_env, ENV['on'].to_sym unless ENV['on'].nil?
-
   require "#{File.join(__dir__, 'deploy', "#{fetch(:rails_env)}_configurations_files", "#{fetch(:rails_env)}.rb")}"
-  ['python-software-properties',
+
+  command %[sudo -A apt-get update]
+  ['software-properties-common',
    'libmysqlclient-dev',
    'imagemagick',
    'libmagickwand-dev',
@@ -74,9 +75,9 @@ task setup_prerequisites: :remote_environment do
     command %[sudo -A apt-get install -y #{package}]
   end
 
-  comment "---------------------------------------------------------"
-  comment "-----> Installing Ruby Version Manager"
-  comment "---------------------------------------------------------"
+  comment '---------------------------------------------------------'
+  comment '-----> Installing Ruby Version Manager'
+  comment '---------------------------------------------------------'
   command %[sudo -A apt-get install libgdbm-dev libncurses5-dev automake libtool bison libffi-dev]
   command %[gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB]
   command %[curl -sSL https://get.rvm.io | bash -s stable]
