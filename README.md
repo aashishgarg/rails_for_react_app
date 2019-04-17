@@ -6,3 +6,5 @@
 * Database - Mysql
 * Database version - Ver 14.14 Distrib 5.7.25
 * deployment tool - Mina
+* Authentication Gem - Devise
+* Admin Application tool - Active Admin
