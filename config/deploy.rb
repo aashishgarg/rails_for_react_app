@@ -27,7 +27,7 @@ set :ubuntu_code_name, 'bionic' # To find out - (`lsb_release --codename | cut -
 task :remote_environment do
   set :rails_env, ENV['on'].to_sym unless ENV['on'].nil?
   require "#{File.join(__dir__, 'deploy', "#{fetch(:rails_env)}_configurations_files", "#{fetch(:rails_env)}.rb")}"
-  invoke :'rvm:use', "ruby-#{fetch(:ruby_version)}@#{fetch(:gemset)}"
+  # invoke :'rvm:use', "ruby-#{fetch(:ruby_version)}@#{fetch(:gemset)}"
 end
 
 task setup_prerequisites: :remote_environment do
@@ -74,16 +74,16 @@ task setup_prerequisites: :remote_environment do
     command %[sudo -A apt-get install -y #{package}]
   end
 
-  # comment "---------------------------------------------------------"
-  # comment "-----> Installing Ruby Version Manager"
-  # comment "---------------------------------------------------------"
-  # command %[sudo -A apt-get install libgdbm-dev libncurses5-dev automake libtool bison libffi-dev]
-  # command %[gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB]
-  # command %[curl -sSL https://get.rvm.io | bash -s stable]
-  # command %[source "#{fetch(:rvm_path)}"]
-  # command %[rvm install "#{fetch(:ruby_version)}"]
-  # command %[rvm use "#{fetch(:ruby_version)}" --default]
-  # command %[gem install bundler]
+  comment "---------------------------------------------------------"
+  comment "-----> Installing Ruby Version Manager"
+  comment "---------------------------------------------------------"
+  command %[sudo -A apt-get install libgdbm-dev libncurses5-dev automake libtool bison libffi-dev]
+  command %[gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB]
+  command %[curl -sSL https://get.rvm.io | bash -s stable]
+  command %[source "#{fetch(:rvm_path)}"]
+  command %[rvm install "#{fetch(:ruby_version)}"]
+  command %[rvm use "#{fetch(:ruby_version)}" --default]
+  command %[gem install bundler]
 
   command %[mkdir "#{fetch(:deploy_to)}"]
   command %[chown -R "#{fetch(:user)}" "#{fetch(:deploy_to)}"]
