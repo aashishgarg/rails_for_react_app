@@ -15,5 +15,25 @@ module Labs
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+    if Rails.env.production? || Rails.env.staging?
+      config.middleware.use ExceptionNotification::Rack,
+                            email: {
+                              email_prefix: "[MyLocalLabs][#{Rails.env}] ",
+                              sender_address: %('Exception Notifier' <no-reply@mylocallabs.com>),
+                              exception_recipients: %w[01ashishgarg@gmail.com],
+                              delivery_method: :smtp,
+                              deliver_with: :deliver,
+                              smtp_settings: {
+                                address: 'smtp.gmail.com',
+                                port: 587,
+                                domain: 'gmail.com',
+                                user_name: Rails.application.credentials.exception_username,
+                                password: Rails.application.credentials.exception_password,
+                                authentication: :plain,
+                                enable_starttls_auto: true
+                              }
+                            }
+    end
   end
 end
