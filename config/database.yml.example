@@ -9,10 +9,10 @@ production:
   <<: *default
   database: <%= Rails.application.credentials.production[:database_name] %>
   username: <%= Rails.application.credentials.production[:database_username] %>
-  password: <%= Rails.application.credentials.production[:database_name] %>
+  password: <%= Rails.application.credentials.production[:database_password] %>
 
 staging:
   <<: *default
   database: <%= Rails.application.credentials.production[:database_name] %>
   username: <%= Rails.application.credentials.production[:database_username] %>
-  password: <%= Rails.application.credentials.production[:database_name] %>
+  password: <%= Rails.application.credentials.production[:database_password] %>
