@@ -14,7 +14,7 @@ set :user, 'deploy'
 set :deploy_to, "/home/#{fetch(:user)}/#{fetch(:application)}"
 set :repository, repository_url
 set :branch, set_branch
-set :rvm_use_path, '~/.rvm/scripts/rvm'
+set :rvm_use_path, "/home/#{fetch(:user)}/.rvm/scripts/rvm"
 set :ruby_version, "#{File.readlines(File.join(__dir__, '..', '.ruby-version')).first.strip}"
 set :gemset, "#{File.readlines(File.join(__dir__, '..', '.ruby-gemset')).first.strip}"
 set :shared_dirs, fetch(:shared_dirs, []).push('public/system', 'tmp')
@@ -149,3 +149,10 @@ task :deploy => :remote_environment do
   end
   invoke :restart
 end
+
+# After fresh installation of mysql on server, follow steps -
+#   1. sudo mysql -u root
+#   2. ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'new_password';
+#   3. sudo service mysql stop
+#   4. sudo service mysql start
+#   5. Now login mysql without sudo
